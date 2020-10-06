@@ -64,13 +64,13 @@ impl Universe {
                 let idx = self.get_index(row, col);
                 let cell = self.cells[idx];
                 let live_neighbors = self.live_neighbor_count(row, col);
-                log!(
-                    "cell[{}, {}] is initially {:?} and has {} live neighbors",
-                    row,
-                    col,
-                    cell,
-                    live_neighbors
-                );
+                // log!(
+                //     "cell[{}, {}] is initially {:?} and has {} live neighbors",
+                //     row,
+                //     col,
+                //     cell,
+                //     live_neighbors
+                // );
                 let next_cell = match (cell, live_neighbors) {
                     (Cell::Alive, x) if x < 2 => Cell::Dead,
                     (Cell::Alive, x) if x > 3 => Cell::Dead,
@@ -89,7 +89,7 @@ impl Universe {
         let height = 64;
         let cells = (0..width * height)
             .map(|i| {
-                if i % 2 == 0 || i % 7 == 0 || Math::random() > 0.5 {
+                if i % 2 == 0 || i % 7 == 0 {
                     Cell::Alive
                 } else {
                     Cell::Dead
@@ -129,6 +129,10 @@ impl Universe {
     pub fn cells(&self) -> *const Cell {
         self.cells.as_ptr()
     }
+    pub fn toggle_cell(&mut self, row: u32, column: u32) {
+        let idx = self.get_index(row, column);
+        self.cells[idx].toggle();
+    }
 }
 impl fmt::Display for Universe {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -156,5 +160,13 @@ impl Universe {
             let idx = self.get_index(row, col);
             self.cells[idx] = Cell::Alive;
         }
+    }
+}
+impl Cell {
+    fn toggle(&mut self) {
+        *self = match *self {
+            Cell::Dead => Cell::Alive,
+            Cell::Alive => Cell::Dead,
+        };
     }
 }
